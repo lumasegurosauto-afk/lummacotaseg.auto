@@ -1,0 +1,6 @@
+{
+  "name": "Lumma Cotação Auto",
+  "description": "Plataforma de cotação de seguros automotivos com tecnologia e segurança.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
