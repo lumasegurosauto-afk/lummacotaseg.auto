@@ -247,18 +247,9 @@ export default function AdminView({
 
           {/* Prompt / Credentials Hints box */}
           <div className="bg-[#0e2a44] border border-slate-800/80 p-4 rounded-xl text-[11px] text-slate-400 space-y-1">
-            <p className="font-bold text-slate-300 mb-1 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              Credenciais de Acesso (Administrador)
-            </p>
-            <p>Utilize as seguintes credenciais padrão criadas para a área restrita:</p>
-            <div className="font-mono bg-[#081b2e] p-2 rounded border border-slate-800/60 mt-1.5 space-y-0.5 select-all">
-              <p><span className="text-slate-500">Usuário:</span> <span className="text-white font-bold">admin</span></p>
-              <p><span className="text-slate-500">Senha:</span> <span className="text-white font-bold">lumma2026</span></p>
-            </div>
-          </div>
 
-          <div className="pt-2 text-center">
+
+            <div className="pt-2 text-center">
             <button
               type="button"
               onClick={() => setView('home')}
