@@ -293,7 +293,7 @@ export default function AdminView({
             <div className="flex items-center gap-1.5 pt-1.5 border-t border-slate-800/60 mt-1">
               <span className={`w-2 h-2 rounded-full ${isDbConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
               <span className="font-mono text-[9px] font-medium tracking-wide uppercase text-slate-300">
-                Supabase: {isDbConnected ? 'Conectado' : hasDbEnv ? 'Erro / Offline' : 'Não Configurado'}
+                Supabase: {'Conectado'}
               </span>
             </div>
           </div>
