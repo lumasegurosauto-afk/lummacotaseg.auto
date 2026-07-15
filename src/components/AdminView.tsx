@@ -41,8 +41,8 @@ export default function AdminView({
   onDeleteLead, 
   onAddSimulatedLead,
   setView,
-  isDbConnected = false,
-  hasDbEnv = false
+  isDbConnected = true,
+  hasDbEnv = true
 }: AdminViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'TODOS' | 'PENDENTE' | 'CONCLUÍDO' | 'CANCELADO'>('TODOS');
