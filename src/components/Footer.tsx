@@ -62,7 +62,25 @@ export default function Footer({ setView }: FooterProps) {
             <Lock className="w-3 h-3" /> Conexão protegida por criptografia SSL/TLS de ponta a ponta.
           </p>
         </div>
-      </div>
+      </div><div className="flex justify-center gap-6 mt-4">
+  <a 
+    href="https://www.instagram.com/lummaseguros" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="text-slate-400 hover:text-pink-500 font-medium transition-colors"
+  >
+    Instagram
+  </a>
+  <a 
+    href="https://www.facebook.com/share/1JFLHFdDen/" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="text-slate-400 hover:text-blue-500 font-medium transition-colors"
+  >
+    Facebook
+  </a>
+</div>
+
     </footer>
   );
 }
