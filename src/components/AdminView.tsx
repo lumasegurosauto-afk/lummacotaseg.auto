@@ -41,8 +41,8 @@ export default function AdminView({
   onDeleteLead, 
   onAddSimulatedLead,
   setView,
-  isDbConnected = true,
-  hasDbEnv = true
+  isDbConnected = false,
+  hasDbEnv = false
 }: AdminViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'TODOS' | 'PENDENTE' | 'CONCLUÍDO' | 'CANCELADO'>('TODOS');
@@ -247,9 +247,14 @@ export default function AdminView({
 
           {/* Prompt / Credentials Hints box */}
           <div className="bg-[#0e2a44] border border-slate-800/80 p-4 rounded-xl text-[11px] text-slate-400 space-y-1">
+            <div className="hidden font-mono bg-[#081b2e] p-2 rounded ...">
 
+              <p><span className="text-slate-500">Usuário:</span> <span className="text-white font-bold">admin</span></p>
+              <p><span className="text-slate-500">Senha:</span> <span className="text-white font-bold">lumma2026</span></p>
+            </div>
+          </div>
 
-            <div className="pt-2 text-center">
+          <div className="pt-2 text-center">
             <button
               type="button"
               onClick={() => setView('home')}
@@ -284,7 +289,7 @@ export default function AdminView({
             <div className="flex items-center gap-1.5 pt-1.5 border-t border-slate-800/60 mt-1">
               <span className={`w-2 h-2 rounded-full ${isDbConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
               <span className="font-mono text-[9px] font-medium tracking-wide uppercase text-slate-300">
-                Supabase: {'Conectado'}
+                Supabase: {isDbConnected ? 'Conectado' : hasDbEnv ? 'Erro / Offline' : 'Não Configurado'}
               </span>
             </div>
           </div>
