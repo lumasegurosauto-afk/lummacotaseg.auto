@@ -111,8 +111,9 @@ export default function HomeView({ setView }: HomeViewProps) {
                   <Zap className="w-6 h-6 animate-pulse" />
                 </div>
                 <div>
-                  <p className="font-sans text-xs font-bold text-[#74777d] uppercase tracking-wider">Cotação Completa</p>
-                  <p className="font-sans text-lg font-extrabold text-[#041627]">com as melhores seguradoras</p>
+<p className="tracking-wider">Cotação Completa</p>
+<p>em apenas alguns instantes</p>
+
 </p>
                 </div>
               </div>
