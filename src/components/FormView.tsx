@@ -79,7 +79,6 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
     };
 
     try {
-      // Salva no banco de dados online do Supabase
       const { error } = await supabase
         .from('leads')
         .insert([{
@@ -90,7 +89,6 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
 
       if (error) throw error;
 
-      // Executa a função local e muda de tela
       onAddLead(leadData);
       setView('success');
     } catch (error: any) {
@@ -250,3 +248,8 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
                       {opt}
                     </button>
                   ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
