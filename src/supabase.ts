@@ -1,26 +1,13 @@
-// Sistema inteligente de leitura dupla de credenciais (Vite e Next.js/Process)
-const supabaseUrl = (
-  typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL || 
-  typeof process !== 'undefined' && process.env?.VITE_SUPABASE_URL ||
-  typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_SUPABASE_URL ||
-  ''
-).replace(/\/$/, '');
+// COLA O SEU LINK DO SUPABASE AQUI (Ex: https://supabase.co)
+const supabaseUrl = 'https://hkwxwzklkiegrcfyljjm.supabase.co/rest/v1/';
 
-const supabaseAnonKey = (
-  typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_ANON_KEY || 
-  typeof process !== 'undefined' && process.env?.VITE_SUPABASE_ANON_KEY ||
-  typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  ''
-);
+// COLA A SUA CHAVE ANON PUBLIC AQUI (Aquela cheia de letras e números)
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhrd3h3emtsa2llZ3JjZnlsamptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NDQ5OTUsImV4cCI6MjA5OTUyMDk5NX0.CwFbQuKYBVasF4aZwzHk04v0MCC5tNR3B00_ilj4uDg';
 
 export const supabase = {
   from: (tableName: string) => ({
     insert: async (data: any[]) => {
       try {
-        if (!supabaseUrl || !supabaseAnonKey) {
-          console.error('Erro: Chaves de conexão vazias no envio.');
-          return { data: null, error: new Error('Falta de credenciais') };
-        }
         const response = await fetch(`${supabaseUrl}/rest/v1/${tableName}`, {
           method: 'POST',
           headers: {
@@ -40,10 +27,6 @@ export const supabase = {
     },
     select: async (columns = '*') => {
       try {
-        if (!supabaseUrl || !supabaseAnonKey) {
-          console.error('Erro: Chaves de conexão vazias na leitura.');
-          return { data: [], error: new Error('Falta de credenciais') };
-        }
         const response = await fetch(`${supabaseUrl}/rest/v1/${tableName}?select=${columns}`, {
           method: 'GET',
           headers: {
