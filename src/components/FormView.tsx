@@ -29,7 +29,7 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
       return;
     }
     if (!consent) {
-      setValidationError('Você precisa aceitar os termos.');
+      setValidationError('Você precisa aceitar os termos de privacidade.');
       return;
     }
     
@@ -43,12 +43,13 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
         status: 'Novo',
         createdAt: new Date().toISOString()
       }]);
+      
       if (error) throw error;
       onAddLead(leadData);
       setView('success');
     } catch (err) {
-      setValidationError('Erro ao enviar dados. Tente novamente.');
-    } finally {
+      setValidationError('Erro ao enviar dados para o servidor. Tente novamente.');
+    } {
       setIsSubmitting(false);
     }
   };
@@ -60,7 +61,7 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
           <div className="p-3 bg-[#115cb9]/10 rounded-xl text-[#115cb9]"><Car className="w-6 h-6" /></div>
           <div>
             <h1 className="text-xl font-bold text-white">Solicitar Cotação</h1>
-            <p className="text-zinc-400 text-sm">Preencha os dados abaixo</p>
+            <p className="text-zinc-400 text-sm">Preencha os dados abaixo para receber sua proposta</p>
           </div>
         </div>
 
@@ -72,46 +73,73 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
             </div>
           )}
 
+          {/* Dados Pessoais */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-zinc-400 uppercase flex items-center gap-2"><User className="w-4 h-4" /> Dados Pessoais</h3>
             <div>
               <label className="block text-sm text-zinc-300 mb-1">Nome Completo *</label>
-              <input type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white" />
+              <input type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#115cb9]" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-zinc-300 mb-1">E-mail *</label>
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white" />
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#115cb9]" />
               </div>
               <div>
-                <label className="block text-sm text-zinc-300 mb-1">Telefone *</label>
-                <input type="text" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white" />
+                <label className="block text-sm text-zinc-300 mb-1">Telefone / WhatsApp *</label>
+                <input type="text" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#115cb9]" placeholder="(00) 00000-0000" />
               </div>
             </div>
             <div>
               <label className="block text-sm text-zinc-300 mb-1">CPF *</label>
-              <input type="text" required value={cpf} onChange={(e) => setCpf(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white" />
+              <input type="text" required value={cpf} onChange={(e) => setCpf(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#115cb9]" placeholder="000.000.000-00" />
             </div>
           </div>
 
+          {/* Dados do Veículo e Uso */}
           <div className="space-y-4 pt-4 border-t border-zinc-800">
             <h3 className="text-sm font-semibold text-zinc-400 uppercase flex items-center gap-2"><Settings className="w-4 h-4" /> Veículo e Uso</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-zinc-300 mb-1">Placa *</label>
-                <input type="text" required value={plate} onChange={(e) => setPlate(e.target.value.toUpperCase())} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white" />
+                <label className="block text-sm text-zinc-300 mb-1">Placa do Veículo *</label>
+                <input type="text" required value={plate} onChange={(e) => setPlate(e.target.value.toUpperCase())} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#115cb9]" placeholder="AAA0A00" />
               </div>
               <div>
-                <label className="block text-sm text-zinc-300 mb-1">CEP *</label>
-                <input type="text" required value={zipcode} onChange={(e) => setZipcode(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white" />
+                <label className="block text-sm text-zinc-300 mb-1">CEP de Circulação *</label>
+                <input type="text" required value={zipcode} onChange={(e) => setZipcode(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#115cb9]" placeholder="00000-000" />
+              </div>
+            </div>
+
+            {/* DEVOLVENDO AS OPÇÕES DE SELEÇÃO SUMIDAS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div>
+                <label className="block text-sm text-zinc-300 mb-2">Uso do Veículo</label>
+                <div className="flex gap-2">
+                  {(['Particular/Lazer', 'Comercial'] as const).map((opt) => (
+                    <button key={opt} type="button" onClick={() => setUsage(opt)} className={`flex-1 py-3 px-4 rounded-xl border text-sm font-medium transition ${usage === opt ? 'bg-[#115cb9] border-[#115cb9] text-white' : 'bg-zinc-950 border-zinc-800 text-zinc-400'}`}>
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-zinc-300 mb-2">Condutor menor de 25 anos?</label>
+                <div className="flex gap-2">
+                  {(['Não', 'Sim'] as const).map((opt) => (
+                    <button key={opt} type="button" onClick={() => setYoungDriver(opt)} className={`flex-1 py-3 px-4 rounded-xl border text-sm font-medium transition ${youngDriver === opt ? 'bg-[#115cb9] border-[#115cb9] text-white' : 'bg-zinc-950 border-zinc-800 text-zinc-400'}`}>
+                      {opt}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
+          {/* Consentimento e Envio */}
           <div className="pt-4 border-t border-zinc-800 space-y-4">
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 w-4 h-4 text-[#115cb9]" />
-              <span className="text-xs text-zinc-400">Autorizo o tratamento dos meus dados para cálculo do seguro de acordo com a LGPD.</span>
+              <span className="text-xs text-zinc-400">Autorizo a coleta e tratamento dos meus dados pessoais para fins de cálculo de cotação de seguros, conforme a LGPD.</span>
             </label>
             <div className="flex gap-3 pt-2">
               <button type="button" onClick={() => setView('home')} className="flex-1 py-3 bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-xl font-medium">Cancelar</button>
