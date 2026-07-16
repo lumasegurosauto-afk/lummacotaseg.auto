@@ -38,20 +38,32 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
     const leadData = { fullName, email, phone, cpf, plate, zipcode, usage, youngDriver };
 
     try {
-      // Tenta enviar para o banco de dados online
-      await supabase.from('leads').insert([{
-        ...leadData,
+      // Traduz os nomes das colunas para o padrão aceito pelo banco de dados (Supabase)
+      const { error } = await supabase.from('leads').insert([{
+        full_name: fullName,
+        email: email,
+        phone: phone,
+        cpf: cpf,
+        plate: plate,
+        zipcode: zipcode,
+        usage: usage,
+        young_driver: youngDriver,
         status: 'Novo',
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString()
       }]);
-    } catch (err) {
-      console.warn('Salvando em modo de contingência local:', err);
-    }
 
-    // Mesmo se o banco online der erro, o site salva local e avança com sucesso!
-    onAddLead(leadData);
-    setIsSubmitting(false);
-    setView('success');
+      if (error) throw error;
+
+      onAddLead(leadData);
+      setView('success');
+    } catch (err: any) {
+      console.error(err);
+      // Se ainda houver divergência extrema de colunas, salva local para não perder o cliente
+      onAddLead(leadData);
+      setView('success');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
