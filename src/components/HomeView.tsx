@@ -71,7 +71,7 @@ export default function HomeView({ setView }: HomeViewProps) {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
               <button
-                onClick={() => setView('quote')}
+                onClick={() => setView('teste')}
                 className="bg-[#115cb9] text-white px-8 py-4 rounded-xl font-sans font-bold text-base hover:bg-[#041627] active:scale-95 transition-all shadow-lg shadow-[#115cb9]/20 flex items-center justify-center gap-2 cursor-pointer"
               >
                 Solicitar Cotação Agora
