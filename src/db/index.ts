@@ -1,8 +1,8 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pkg from 'pg';
 const { Pool } = pkg;
-// REMOVIDO O ".ts" DA LINHA ABAIXO:
-import * as schema from './schema';
+// MODIFICADO: Ajustado para usar a extensão ".js" na importação do schema
+import * as schema from './schema.js';
 
 const connectionString = process.env.DATABASE_URL;
 
