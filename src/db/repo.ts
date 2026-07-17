@@ -1,7 +1,8 @@
 import { eq, desc } from 'drizzle-orm';
 import { getDb, isDbConfigured } from './index';
 import { leads } from './schema';
-import { Lead } from '../types';
+// MODIFICADO: Ajustado para isolar o import apenas na compilação do TypeScript
+import type { Lead } from '../types';
 
 // In-memory fallback for offline/unconfigured environments
 let inMemoryLeads: Lead[] = [
