@@ -39,20 +39,26 @@ export default function AdminView({ setView }: AdminViewProps) {
       const result = await response.json();
       const data = result.leadsList || [];
       
-      const formatted = data.map((item: any) => ({
-        id: item.id || String(Math.random()),
-        fullName: item.fullName || item.full_name || 'Não informado',
-        email: item.email || 'Não informado',
-        phone: item.phone || 'Não informado',
-        cpf: item.cpf || 'Não informado',
-        plate: item.plate || 'Não informado',
-        zipcode: item.zipcode || 'Não informado',
-        usage: item.usage || 'Particular/Lazer',
-        youngDriver: item.youngDriver || item.young_driver || 'Não',
-        status: item.status === 'PENDENTE' || item.status === 'Novo' ? 'Novo' : 
-                item.status === 'CANCELADO' || item.status === 'Em Atendimento' ? 'Em Atendimento' : 'Finalizado',
-        createdAt: item.createdAt || item.created_at || new Date().toISOString()
-      }));
+      const formatted = data.map((item: any) => {
+        // Mapeia o status que vem do banco (PENDENTE, CANCELADO, CONCLUÍDO) para o visual do front
+        let visualStatus = 'Novo';
+        if (item.status === 'CANCELADO') visualStatus = 'Em Atendimento';
+        if (item.status === 'CONCLUÍDO') visualStatus = 'Finalizado';
+
+        return {
+          id: item.id || String(Math.random()),
+          fullName: item.fullName || item.full_name || 'Não informado',
+          email: item.email || 'Não informado',
+          phone: item.phone || 'Não informado',
+          cpf: item.cpf || 'Não informado',
+          plate: item.plate || 'Não informado',
+          zipcode: item.zipcode || 'Não informado',
+          usage: item.usage || 'Particular/Lazer',
+          youngDriver: item.youngDriver || item.young_driver || 'Não',
+          status: visualStatus,
+          createdAt: item.createdAt || item.created_at || new Date().toISOString()
+        };
+      });
       
       setOnlineLeads(formatted);
     } catch (err) {
@@ -65,9 +71,10 @@ export default function AdminView({ setView }: AdminViewProps) {
   // Função para atualizar o status do Lead diretamente no Banco via API
   const handleUpdateStatus = async (id: string, newStatus: 'Novo' | 'Em Atendimento' | 'Finalizado') => {
     try {
-      // Mapeia de volta para o padrão esperado pelo Drizzle schema
-      const apiStatus = newStatus === 'Novo' ? 'PENDENTE' : 
-                        newStatus === 'Em Atendimento' ? 'CANCELADO' : 'CONCLUÍDO';
+      // Mapeia rigorosamente de acordo com as restrições de texto do banco de dados (repo.ts)
+      let apiStatus: 'PENDENTE' | 'CONCLUÍDO' | 'CANCELADO' = 'PENDENTE';
+      if (newStatus === 'Em Atendimento') apiStatus = 'CANCELADO';
+      if (newStatus === 'Finalizado') apiStatus = 'CONCLUÍDO';
 
       const response = await fetch(`/api/leads/${id}`, {
         method: 'PUT',
@@ -75,13 +82,16 @@ export default function AdminView({ setView }: AdminViewProps) {
         body: JSON.stringify({ status: apiStatus })
       });
 
-      if (!response.ok) throw new Error('Falha ao salvar alteração');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Falha ao salvar alteração');
+      }
 
-      // Atualiza o estado visual imediatamente
+      // Atualiza o estado visual imediatamente após a confirmação do banco
       setOnlineLeads(prev => prev.map(lead => lead.id === id ? { ...lead, status: newStatus } : lead));
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao atualizar status:', err);
-      alert('Não foi possível salvar o novo status.');
+      alert(`Não foi possível salvar o novo status: ${err.message}`);
     }
   };
 
@@ -92,10 +102,8 @@ export default function AdminView({ setView }: AdminViewProps) {
       return;
     }
 
-    // Define o cabeçalho das colunas do arquivo
     const headers = ['ID', 'Nome Completo', 'E-mail', 'Telefone', 'CPF', 'Placa', 'CEP', 'Uso do Veiculo', 'Condutor Jovem', 'Status', 'Data de Criacao'];
     
-    // Converte as linhas de cotação para o formato de texto separado por ponto e vírgula
     const rows = filteredLeads.map(lead => [
       lead.id,
       `"${lead.fullName.replace(/"/g, '""')}"`,
@@ -111,12 +119,9 @@ export default function AdminView({ setView }: AdminViewProps) {
     ]);
 
     const csvContent = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
-    
-    // Adiciona o BOM (\uFEFF) para forçar o Excel do celular/PC ler em UTF-8 sem quebrar acentos
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     
-    // Cria um link temporário na tela e simula o clique para iniciar o download
     const link = document.createElement('a');
     link.setAttribute('href', url);
     link.setAttribute('download', `cotacoes_lumma_${new Date().toISOString().slice(0,10)}.csv`);
@@ -237,4 +242,3 @@ export default function AdminView({ setView }: AdminViewProps) {
               <div className="flex flex-col lg:flex-row justify-between gap-4">
                 <div className="space-y-3 flex-1">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-base font-semibold text-white flex items-center gap-2">
