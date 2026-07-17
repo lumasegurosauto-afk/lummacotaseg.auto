@@ -1,6 +1,6 @@
 import express from 'express';
-// REMOVIDO O ".ts" DO FINAL DESTA LINHA ABAIXO:
-import { getAllLeads, createLead, updateLeadStatus, deleteLead, isDbConnected } from '../src/db/repo';
+// MODIFICADO: Alterado para usar a extensão ".js" para compatibilidade ESM na Vercel
+import { getAllLeads, createLead, updateLeadStatus, deleteLead, isDbConnected } from '../src/db/repo.js';
 
 const app = express();
 app.use(express.json());
