@@ -1,6 +1,6 @@
 import { eq, desc } from 'drizzle-orm';
-import { getDb, isDbConfigured } from './index.ts';
-import { leads } from './schema.ts';
+import { getDb, isDbConfigured } from './index';
+import { leads } from './schema';
 import { Lead } from '../types';
 
 // In-memory fallback for offline/unconfigured environments
