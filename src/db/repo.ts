@@ -1,7 +1,7 @@
 import { eq, desc } from 'drizzle-orm';
-import { getDb, isDbConfigured } from './index';
-import { leads } from './schema';
-// MODIFICADO: Ajustado para isolar o import apenas na compilação do TypeScript
+// MODIFICADO: Ajustado para usar a extensão ".js" nas importações internas
+import { getDb, isDbConfigured } from './index.js';
+import { leads } from './schema.js';
 import type { Lead } from '../types';
 
 // In-memory fallback for offline/unconfigured environments
@@ -39,7 +39,6 @@ export async function isDbConnected(): Promise<boolean> {
   try {
     const db = getDb();
     if (!db) return false;
-    // Simple query to verify connection
     await db.select().from(leads).limit(1);
     return true;
   } catch (e) {
@@ -84,7 +83,6 @@ export async function createLead(newLead: Lead): Promise<{ lead: Lead; isOffline
     return { lead: newLead, isOffline: false };
   } catch (error) {
     console.warn("⚠️ Failed to insert lead into PostgreSQL/Supabase. Saving to in-memory store. Error:", error);
-    // Add to in-memory list
     inMemoryLeads = [newLead, ...inMemoryLeads];
     return { lead: newLead, isOffline: true };
   }
