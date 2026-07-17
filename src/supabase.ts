@@ -1,7 +1,7 @@
-// Chaves de conexão oficiais e fixas do seu banco de dados Supabase
-const supabaseUrl = 'https://supabase.co';
+// Sua URL exclusiva e oficial do banco de dados do Supabase
+const supabaseUrl = 'https://hkwxwzklkiegrcfyljjm.supabase.co';
 
-// Chave pública anônima que permite o envio seguro a partir do site
+// Chave pública anônima que permite o envio seguro a partir do seu site
 const supabaseAnonKey = 'sb_publishable_M7epZMdf6n7wunK7v_7rUeY8qS_YvDcl-GZ-2S';
 
 export const supabase = {
