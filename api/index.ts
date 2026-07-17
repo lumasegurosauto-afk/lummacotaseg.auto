@@ -1,5 +1,6 @@
 import express from 'express';
-import { getAllLeads, createLead, updateLeadStatus, deleteLead, isDbConnected } from '../src/db/repo.ts';
+// REMOVIDO O ".ts" DO FINAL DESTA LINHA ABAIXO:
+import { getAllLeads, createLead, updateLeadStatus, deleteLead, isDbConnected } from '../src/db/repo';
 
 const app = express();
 app.use(express.json());
