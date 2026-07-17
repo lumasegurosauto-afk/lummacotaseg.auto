@@ -4,16 +4,13 @@ import { getAllLeads, createLead, updateLeadStatus, deleteLead, isDbConnected } 
 const app = express();
 app.use(express.json());
 
-// API Routes for Vercel Serverless Function
+// Rota de status do banco
 app.get('/api/db-status', async (req, res) => {
-  try {
-    const connected = await isDbConnected();
-    res.json({ connected, hasEnv: !!process.env.DATABASE_URL });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
+  const connected = await isDbConnected();
+  res.json({ connected, hasEnv: !!process.env.DATABASE_URL });
 });
 
+// Listar leads
 app.get('/api/leads', async (req, res) => {
   try {
     const result = await getAllLeads();
@@ -23,6 +20,7 @@ app.get('/api/leads', async (req, res) => {
   }
 });
 
+// Criar lead
 app.post('/api/leads', async (req, res) => {
   try {
     const result = await createLead(req.body);
@@ -32,6 +30,7 @@ app.post('/api/leads', async (req, res) => {
   }
 });
 
+// Atualizar status
 app.put('/api/leads/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -43,6 +42,7 @@ app.put('/api/leads/:id', async (req, res) => {
   }
 });
 
+// Deletar lead
 app.delete('/api/leads/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -53,4 +53,5 @@ app.delete('/api/leads/:id', async (req, res) => {
   }
 });
 
+// Exporta para a Vercel rodar como Serverless Function
 export default app;
