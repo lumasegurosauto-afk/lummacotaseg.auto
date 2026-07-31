@@ -18,16 +18,41 @@ export default function App() {
   const [adminPassword, setAdminPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
+  // 🔄 Buscar Leads do Banco de Dados
   const fetchLeads = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase.from('leads').select('*');
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('createdAt', { ascending: false }); // Traz os mais recentes primeiro
+        
       if (error) throw error;
       if (data) setLeads(data);
     } catch (error) {
       console.error('Erro ao buscar cotações:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 🆙 Atualizar Status de um Lead no Banco de Dados
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .update({ status: newStatus })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Atualiza o estado visual na tela imediatamente
+      setLeads((prevLeads) =>
+        prevLeads.map((lead) => (lead.id === id ? { ...lead, status: newStatus } : lead))
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar o status:', error);
+      alert('Não foi possível atualizar o status no banco de dados.');
     }
   };
 
@@ -39,7 +64,6 @@ export default function App() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // DEFINE A SENHA DO PAINEL (Mude 'admin123' para a sua senha de preferência)
     if (adminPassword === 'admin123') {
       setIsAuthenticated(true);
       setLoginError('');
@@ -48,14 +72,24 @@ export default function App() {
     }
   };
 
-  const handleAddLead = (newLeadData: Omit<Lead, 'id' | 'createdAt' | 'status'>) => {
+  // 📝 Criar Novo Lead salvando permanentemente no Banco de Dados
+  const handleAddLead = async (newLeadData: Omit<Lead, 'id' | 'createdAt' | 'status'>) => {
+    const generatedId = Math.random().toString(36).substring(7);
     const newLead: Lead = {
       ...newLeadData,
-      id: Math.random().toString(36).substring(7),
+      id: generatedId,
       status: 'Novo',
       createdAt: new Date().toISOString(),
     };
-    setLeads((prev) => [newLead, ...prev]);
+
+    try {
+      const { error } = await supabase.from('leads').insert([newLead]);
+      if (error) throw error;
+      
+      setLeads((prev) => [newLead, ...prev]);
+    } catch (error) {
+      console.error('Erro ao salvar lead no Supabase:', error);
+    }
   };
 
   return (
@@ -95,12 +129,13 @@ export default function App() {
               </div>
             </div>
           ) : (
-            /* PAINEL DE LEADS LOGADO */
+            /* PAINEL DE LEADS LOGADO COM FUNÇÃO DE ATUALIZAÇÃO */
             <AdminView 
               leads={leads} 
               setView={setView} 
               onRefresh={fetchLeads}
               isLoading={loading}
+              onUpdateStatus={handleUpdateStatus}
             />
           )
         )}
