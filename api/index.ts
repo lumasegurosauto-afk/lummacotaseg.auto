@@ -31,11 +31,17 @@ app.post('/api/leads', async (req, res) => {
   }
 });
 
-// Atualizar status
+// Atualizar status (CORRIGIDO: Traduz e alinha o painel com as restrições do banco)
 app.put('/api/leads/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    let { status } = req.body;
+
+    // Converte os termos em português para os termos que o Drizzle ORM espera no banco
+    if (status === 'Novo' || status === 'PENDENTE') status = 'PENDENTE';
+    if (status === 'Em Atendimento' || status === 'CANCELADO') status = 'CANCELADO';
+    if (status === 'Finalizado' || status === 'CONCLUÍDO') status = 'CONCLUÍDO';
+
     const result = await updateLeadStatus(id, status);
     res.json(result);
   } catch (err: any) {
