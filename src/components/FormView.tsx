@@ -38,19 +38,18 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
     const leadData = { fullName, email, phone, cpf, plate, zipcode, usage, youngDriver };
 
     try {
-      // CORRIGIDO: Nomes de propriedades ajustados para bater estritamente com o Drizzle Schema e tabelas
+      // BLINDADO: Envia usando as colunas físicas exatas do banco de dados (Snake Case)
+      // Removemos o 'id' e 'createdAt' manuais para deixar o Supabase gerar sozinho
       const { error } = await supabase.from('leads').insert([{
-        id: Math.random().toString(36).substring(7),
-        fullName: fullName,
+        full_name: fullName,
         email: email,
         phone: phone,
         cpf: cpf,
         plate: plate,
         zipcode: zipcode,
         usage: usage,
-        youngDriver: youngDriver,
-        status: 'Novo',
-        createdAt: new Date().toISOString()
+        young_driver: youngDriver,
+        status: 'Novo'
       }]);
 
       if (error) throw error;
@@ -59,7 +58,7 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
       setView('success');
     } catch (err: any) {
       console.error("Erro crítico ao salvar cotação no Supabase:", err.message);
-      // Fallback para evitar travamento da tela do cliente
+      // Mantém a navegação para garantir a experiência do cliente
       onAddLead(leadData);
       setView('success');
     } finally {
