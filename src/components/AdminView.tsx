@@ -24,7 +24,7 @@ interface AdminViewProps {
   onUpdateStatus?: (id: string, newStatus: string) => Promise<void>;
 }
 
-export default function AdminView({ setView }: AdminViewProps) {
+export default function AdminView({ setView, leads, onRefresh, isLoading, onUpdateStatus }: AdminViewProps) {
   const [onlineLeads, setOnlineLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -242,4 +242,3 @@ export default function AdminView({ setView }: AdminViewProps) {
             <div key={lead.id} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
               <div>
                 {/* ID, Data e Seletor Interativo de Status */}
-                <div className="flex items-center justify-between gap-2 mb-4 border-b border-zinc-800/50 pb-3">
