@@ -21,6 +21,7 @@ interface AdminViewProps {
   setView: (view: 'home' | 'form' | 'success' | 'admin') => void;
   onRefresh?: () => void;
   isLoading?: boolean;
+  onUpdateStatus?: (id: string, newStatus: string) => Promise<void>;
 }
 
 export default function AdminView({ setView }: AdminViewProps) {
@@ -29,7 +30,7 @@ export default function AdminView({ setView }: AdminViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentTab, setCurrentTab] = useState<'Todos' | 'Novo' | 'Em Atendimento' | 'Finalizado'>('Todos');
 
-  // Busca os dados da nossa nova API local integrada ao Drizzle ORM
+  // Busca os dados da nossa API local integrada ao Drizzle ORM
   const loadOnlineLeads = async () => {
     try {
       setLoading(true);
@@ -40,10 +41,11 @@ export default function AdminView({ setView }: AdminViewProps) {
       const data = result.leadsList || [];
       
       const formatted = data.map((item: any) => {
-        // Mapeia o status que vem do banco (PENDENTE, CANCELADO, CONCLUÍDO) para o visual do front
+        // Alinha os mapeamentos rígidos do banco com as abas visuais do painel admin
         let visualStatus = 'Novo';
-        if (item.status === 'CANCELADO') visualStatus = 'Em Atendimento';
-        if (item.status === 'CONCLUÍDO') visualStatus = 'Finalizado';
+        if (item.status === 'PENDENTE' || item.status === 'Novo') visualStatus = 'Novo';
+        if (item.status === 'CANCELADO' || item.status === 'Em Atendimento') visualStatus = 'Em Atendimento';
+        if (item.status === 'CONCLUÍDO' || item.status === 'Finalizado') visualStatus = 'Finalizado';
 
         return {
           id: item.id || String(Math.random()),
@@ -71,7 +73,7 @@ export default function AdminView({ setView }: AdminViewProps) {
   // Função para atualizar o status do Lead diretamente no Banco via API
   const handleUpdateStatus = async (id: string, newStatus: 'Novo' | 'Em Atendimento' | 'Finalizado') => {
     try {
-      // Mapeia rigorosamente de acordo com as restrições de texto do banco de dados (repo.ts)
+      // Sincroniza perfeitamente com os tipos aceitos pela API e pelo repo.ts
       let apiStatus: 'PENDENTE' | 'CONCLUÍDO' | 'CANCELADO' = 'PENDENTE';
       if (newStatus === 'Em Atendimento') apiStatus = 'CANCELADO';
       if (newStatus === 'Finalizado') apiStatus = 'CONCLUÍDO';
@@ -207,38 +209,37 @@ export default function AdminView({ setView }: AdminViewProps) {
               <tab.icon className={`w-5 h-5 ${tab.color}`} />
               <span className="text-2xl font-bold text-white">{tab.count}</span>
             </div>
-            <p className="text-zinc-400 text-xs font-medium">{tab.label}</p>
+            <p className="text-zinc-400 text-sm">{tab.label}</p>
           </button>
         ))}
       </div>
 
-      {/* Busca */}
+      {/* Barra de Busca */}
       <div className="relative mb-6">
-        <Search className="absolute left-4 top-3.5 w-4 h-4 text-zinc-500" />
+        <Search className="absolute left-4 top-3.5 w-5 h-5 text-zinc-500" />
         <input 
           type="text"
+          placeholder="Buscar por nome, e-mail, CPF ou placa..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Buscar por nome, e-mail, CPF ou placa do veículo..."
-          className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-11 pr-4 py-3 text-white focus:outline-none focus:border-[#115cb9] transition text-sm"
+          className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-[#115cb9] placeholder-zinc-500 text-sm transition"
         />
       </div>
 
-      {/* Lista de Cards */}
+      {/* Lista de Cards / Conteúdo principal */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-12 bg-zinc-900/50 border border-zinc-800 rounded-2xl">
-          <RefreshCw className="w-8 h-8 text-[#115cb9] animate-spin mb-3" />
-          <p className="text-zinc-400 text-sm">Buscando cotações no banco de dados...</p>
+        <div className="text-center py-12 text-zinc-500 flex flex-col items-center gap-2">
+          <RefreshCw className="w-8 h-8 animate-spin text-[#115cb9]" />
+          <p>Carregando cotações e leads da API...</p>
         </div>
       ) : filteredLeads.length === 0 ? (
-        <div className="text-center py-12 bg-zinc-900/50 border border-zinc-800 rounded-2xl">
-          <FileText className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
-          <p className="text-zinc-400 text-sm">Nenhuma cotação encontrada nesta categoria.</p>
+        <div className="text-center py-12 text-zinc-500 border border-dashed border-zinc-800 rounded-2xl">
+          Nenhuma cotação localizada para os critérios selecionados.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filteredLeads.map((lead) => (
-            <div key={lead.id} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 hover:border-zinc-700 transition">
-              <div className="flex flex-col lg:flex-row justify-between gap-4">
-                <div className="space-y-3 flex-1">
-                  <div className="flex flex-wrap items-center gap-3">
+            <div key={lead.id} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+              <div>
+                {/* ID, Data e Seletor Interativo de Status */}
+                <div className="flex items-center justify-between gap-2 mb-4 border-b border-zinc-800/50 pb-3">
