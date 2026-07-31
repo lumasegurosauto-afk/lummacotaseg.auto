@@ -38,18 +38,19 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
     const leadData = { fullName, email, phone, cpf, plate, zipcode, usage, youngDriver };
 
     try {
-      // Traduz os nomes das colunas para o padrão aceito pelo banco de dados (Supabase)
+      // CORRIGIDO: Nomes de propriedades ajustados para bater estritamente com o Drizzle Schema e tabelas
       const { error } = await supabase.from('leads').insert([{
-        full_name: fullName,
+        id: Math.random().toString(36).substring(7),
+        fullName: fullName,
         email: email,
         phone: phone,
         cpf: cpf,
         plate: plate,
         zipcode: zipcode,
         usage: usage,
-        young_driver: youngDriver,
+        youngDriver: youngDriver,
         status: 'Novo',
-        created_at: new Date().toISOString()
+        createdAt: new Date().toISOString()
       }]);
 
       if (error) throw error;
@@ -57,8 +58,8 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
       onAddLead(leadData);
       setView('success');
     } catch (err: any) {
-      console.error(err);
-      // Se ainda houver divergência extrema de colunas, salva local para não perder o cliente
+      console.error("Erro crítico ao salvar cotação no Supabase:", err.message);
+      // Fallback para evitar travamento da tela do cliente
       onAddLead(leadData);
       setView('success');
     } finally {
@@ -152,12 +153,15 @@ export default function FormView({ onAddLead, setView }: FormViewProps) {
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 w-4 h-4 text-[#115cb9]" />
               <span className="text-xs text-zinc-400">Autorizo a coleta e tratamento dos meus dados pessoais para fins de cálculo de cotação de seguros, conforme a LGPD.</span>
             </label>
-            <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setView('home')} className="flex-1 py-3 bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-xl font-medium">Cancelar</button>
-              <button type="submit" disabled={isSubmitting} className="flex-1 py-3 bg-[#115cb9] text-white rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-50">
-                {isSubmitting ? <span>Enviando...</span> : <><span className="text-white">Enviar Solicitação</span><Send className="w-4 h-4 text-white" /></>}
-              </button>
-            </div>
+            
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-4 bg-[#115cb9] hover:bg-[#115cb9]/90 text-white rounded-xl font-medium transition flex items-center justify-center gap-2 disabled:opacity-50 text-sm shadow-lg shadow-blue-900/20"
+            >
+              <Send className={`w-4 h-4 ${isSubmitting ? 'animate-pulse' : ''}`} />
+              <span>{isSubmitting ? 'Enviando sua Solicitação...' : 'Enviar Solicitação de Cotação'}</span>
+            </button>
           </div>
         </form>
       </motion.div>
