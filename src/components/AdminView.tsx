@@ -10,7 +10,7 @@ interface AdminViewProps {
   onUpdateStatus?: (id: string, newStatus: string) => Promise<void>;
 }
 
-export default function AdminView({ setView }: AdminViewProps) {
+export default function AdminView({ setView, leads, onRefresh, isLoading, onUpdateStatus }: AdminViewProps) {
   const [onlineLeads, setOnlineLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -63,6 +63,11 @@ export default function AdminView({ setView }: AdminViewProps) {
       });
       if (!response.ok) throw new Error('Erro salvar');
       setOnlineLeads(prev => prev.map(lead => lead.id === id ? { ...lead, status: newStatus } : lead));
+      
+      // Executa o gatilho de atualização global se fornecido
+      if (onUpdateStatus) {
+        await onUpdateStatus(id, newStatus);
+      }
     } catch (err) {
       alert('Erro ao atualizar status');
     }
